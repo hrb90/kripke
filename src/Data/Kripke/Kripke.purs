@@ -1,4 +1,4 @@
-module Data.Kripke.Kripke (Atom, Node, Worlds, Relation, AccessiblePair, KripkeFrame, Valuation, Fact, Model, Evaluation(..), checkModel, runEvaluation, accessible, isFact) where
+module Data.Kripke.Kripke (Atom, Node, Worlds, Relation, AccessiblePair, KripkeFrame, Valuation, Fact, Model, Evaluation(..), checkModel, runEvaluation, testK) where
 
 import Prelude
 import Data.Foldable (elem)
@@ -25,11 +25,10 @@ type Model = { frame :: KripkeFrame, valuation :: Valuation }
 
 data Evaluation err expr = Evaluation (Model -> Either err (Node -> expr -> Boolean))
 
-isFact :: Valuation -> Atom -> Node -> Boolean
-isFact v a w = elem (Tuple a w) v
-
-accessible :: Relation -> Node -> Node -> Boolean
-accessible r w w' = elem (Tuple w w') r
+-- Specializes to testing that an atom is part of the valuation of a node
+-- Or to testing that the second argument is accessible from the first
+testK :: forall a b. Eq a => Eq b => Array (Tuple a b) -> a -> b -> Boolean
+testK s x y = elem (Tuple x y) s
 
 -- Checks that a model satisfies the laws of a given Evaluation's logic.
 checkModel :: forall err a. Evaluation err a -> Model -> Either err Unit

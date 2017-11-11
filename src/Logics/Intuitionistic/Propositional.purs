@@ -5,7 +5,7 @@ import Prelude
 import Data.Array (filter)
 import Data.Foldable (and)
 import Data.Functor (voidRight)
-import Data.Kripke.Kripke (Model, Node, Atom, Evaluation(..), accessible, isFact)
+import Data.Kripke.Kripke (Model, Node, Atom, Evaluation(..), testK)
 import Logics.Intuitionistic.Validation (validate)
 
 
@@ -23,10 +23,10 @@ evaluate _ _ Bottom = false
 evaluate m w (Not x) = evaluate m w (Implies x Bottom)
 evaluate m w (And x1 x2) = evaluate m w x1 && evaluate m w x2
 evaluate m w (Or x1 x2) = evaluate m w x1 || evaluate m w x2
-evaluate { valuation } w (Var v) = isFact valuation v w
+evaluate { valuation } w (Var v) = testK valuation v w
 evaluate m@{ frame: { worlds, relation } } w (Implies x1 x2) = and $ map (evaluate' x2) accessibleSatisfying
   where evaluate' expr world = evaluate m world expr
-        accessibleSatisfying = filter ((&&) <$> (accessible relation w) <*> (evaluate' x1)) worlds
+        accessibleSatisfying = filter ((&&) <$> (testK relation w) <*> (evaluate' x1)) worlds
 
 evaluation :: Evaluation (Array String) Expr
 evaluation = Evaluation $ voidRight <$> evaluate <*> validate
