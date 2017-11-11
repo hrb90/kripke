@@ -5,7 +5,11 @@ import Prelude
 import Data.Array (filter)
 import Data.Foldable (and)
 import Data.Functor (voidRight)
-import Data.Kripke.Kripke (Model, Node, Atom, Evaluation(..), testK)
+import Data.Kripke.Kripke ( Model
+                          , Node
+                          , Atom
+                          , Evaluation(..)
+                          , testK )
 import Logics.Intuitionistic.Validation (validate)
 
 

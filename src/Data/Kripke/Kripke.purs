@@ -1,9 +1,26 @@
-module Data.Kripke.Kripke (Atom, Node, Worlds, Relation, AccessiblePair, KripkeFrame, Valuation, Fact, Model, Evaluation(..), checkModel, runEvaluation, testK) where
+module Data.Kripke.Kripke 
+  ( Atom
+  , Node
+  , Worlds
+  , Relation
+  , AccessiblePair
+  , KripkeFrame
+  , Valuation
+  , Domain
+  , Fact
+  , Model
+  , Evaluation(..)
+  , checkModel
+  , runEvaluation
+  , nodeDomain
+  , testK) where
 
 import Prelude
-import Data.Foldable (elem)
+
+import Data.Array (filter)
 import Data.Either (Either(..))
-import Data.Tuple (Tuple(..))
+import Data.Foldable (elem)
+import Data.Tuple (Tuple(..), fst, snd)
 
 type Atom = String
 
@@ -21,9 +38,14 @@ type Fact = Tuple Atom Node
 
 type Valuation = Array Fact
 
-type Model = { frame :: KripkeFrame, valuation :: Valuation }
+type Domain = Array Fact
+
+type Model = { frame :: KripkeFrame, valuation :: Valuation, domain :: Domain }
 
 data Evaluation err expr = Evaluation (Model -> Either err (Node -> expr -> Boolean))
+
+nodeDomain :: Domain -> Node -> Array Atom
+nodeDomain d w = map fst $ filter (\x -> snd x == w) d 
 
 -- Specializes to testing that an atom is part of the valuation of a node
 -- Or to testing that the second argument is accessible from the first

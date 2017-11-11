@@ -1,4 +1,11 @@
-module Data.Kripke.Validation (Errors, Validation, toEither, validateReflexive, validateTransitive, validateMonotonic) where
+module Data.Kripke.Validation 
+  ( Errors
+  , Validation
+  , toEither
+  , validateReflexive
+  , validateTransitive
+  , validateMonotonic
+  , validateDomain ) where
   
 import Prelude
 
@@ -34,9 +41,23 @@ validateTransitive { worlds, relation } = vMap "The accessibility relation is no
           z <- filter (testK relation y) worlds
           pure (testK relation x z)
 
-validateMonotonic :: Model -> Validation
-validateMonotonic { frame: { worlds, relation }, valuation } = vMap "The valuation is not monotonic" isMonotonic
+validateMonotonicD :: Model -> Validation
+validateMonotonicD { frame: { worlds, relation }, domain } = vMap "The domain is not monotonic" isMonotonic
+  where isMonotonic = and $ do
+          (Tuple atom w) <- domain
+          w' <- filter (testK relation w) worlds
+          pure (testK domain atom w')
+
+validateMonotonicV :: Model -> Validation
+validateMonotonicV { frame: { worlds, relation }, valuation } = vMap "The valuation is not monotonic" isMonotonic
   where isMonotonic = and $ do
           (Tuple atom w) <- valuation
           w' <- filter (testK relation w) worlds
           pure (testK valuation atom w')
+
+validateDomain :: Model -> Validation
+validateDomain { valuation, domain } = vMap "There are valuations for variables not in the domain of the corresponding world" domainMakesSense
+  where domainMakesSense = and $ map (\(Tuple a b) -> testK domain a b) valuation
+
+validateMonotonic :: Model -> Validation
+validateMonotonic m = (validateMonotonicD m) *> (validateMonotonicV m)
