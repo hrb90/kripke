@@ -48,6 +48,7 @@ nodeDomain :: Domain -> Node -> Array Atom
 nodeDomain d w = map fst $ filter (\x -> snd x == w) d 
 
 -- Specializes to testing that an atom is part of the valuation of a node
+-- Or part of the domain of a node
 -- Or to testing that the second argument is accessible from the first
 testK :: forall a b. Eq a => Eq b => Array (Tuple a b) -> a -> b -> Boolean
 testK s x y = elem (Tuple x y) s

@@ -12,7 +12,7 @@ import Data.Kripke.Validation ( toEither
 
 
 validate :: Model -> Either (Array String) Unit
-validate m@{ frame } = toEither $ (validateDomain m) 
-                        *> (validateReflexive frame) 
-                        *> (validateTransitive frame) 
-                        *> (validateMonotonic m)
+validate m@{ frame } = toEither $ validateDomain m 
+                        *> validateReflexive frame 
+                        *> validateTransitive frame 
+                        *> validateMonotonic m

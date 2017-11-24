@@ -1,10 +1,10 @@
 module Logics.Modal.Alethic.Propositional (Expr(..), evaluate) where 
 
-import Data.Kripke.Kripke
 import Prelude
 
 import Data.Array (filter)
 import Data.Foldable (and)
+import Data.Kripke.Kripke (Atom, Model, Node, testK)
 
 -- A formula of modal propositional logic
 data Expr = Taut | Bottom
