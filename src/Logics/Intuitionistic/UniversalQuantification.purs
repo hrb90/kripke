@@ -20,6 +20,7 @@ data Formula = Taut | Bottom | Free FreeVar
             | Implies Formula Formula
 
 -- Universal quantification over formulas of propositional logic
+-- "Rank-1 types"
 data Expr = Formula Formula
             | ForAll FreeVar Expr
  

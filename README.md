@@ -2,6 +2,8 @@
 
 Experimental repo to teach myself --- and, hopefully, other people --- about [Kripke semantics](https://en.wikipedia.org/wiki/Kripke_semantics) for various non-classical logics.
 
+Beware of bugs in the code; to mangle Knuth, I have only typechecked it, not tried it.
+
 ## Let me try it out!
 
 There is a frontend [on gh-pages](http://www.harrisonrbrown.com/kripke/) but it should be considered highly unstable.
