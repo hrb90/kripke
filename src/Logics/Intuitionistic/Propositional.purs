@@ -73,7 +73,7 @@ evaluate { valuation } w (Var v) = testK valuation v w
 -- x -> y means that, in any accessible world where x is true, y is also true
 evaluate m@{ frame: { worlds, relation } } w (Implies x1 x2) = and $ map (evaluate' x2) accessibleSatisfying
   where evaluate' expr world = evaluate m world expr
-        accessibleSatisfying = filter ((&&) <$> (testK relation w) <*> (evaluate' x1)) worlds
+        accessibleSatisfying = filter ((&&) <$> testK relation w <*> evaluate' x1) worlds
 
 evaluation :: Evaluation (Array String) Expr
 evaluation = Evaluation $ voidRight <$> evaluate <*> validate
