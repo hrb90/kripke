@@ -1,4 +1,4 @@
-module Logics.Modal.Alethic.Propositional (Expr(..), evaluate) where 
+module Logics.Modal.Alethic.Propositional (Expr(..), exprParser, evalK, evalT, evalS4, evalS5) where 
 
 import Prelude
 
@@ -9,14 +9,13 @@ import Data.Foldable (and)
 import Data.Functor (voidRight)
 import Data.Generic (class Generic)
 import Data.Kripke.Kripke (Model, Node, Atom, Evaluation(..), testK)
-import Logics.Intuitionistic.Validation (validate)
+import Logics.Modal.Validation (validateK, validateT, validateS4, validateS5)
 import Parsing.Token (modalToken)
 import Text.Parsing.Parser (Parser)
-
 import Text.Parsing.Parser.Expr (Assoc(..), Operator(..), buildExprParser)
 
 -- A formula of modal propositional logic
-data Expr = Taut | Bottom
+data Expr = Top | Bottom
             | Var Atom | Not Expr
             | Box Expr | Diamond Expr
             | And Expr Expr
@@ -58,7 +57,7 @@ exprParser = fix allExprs where
     , [ Infix (reservedOp "->" $> Implies) AssocRight ] ]
 
 evaluate :: Model -> Node -> Expr -> Boolean
-evaluate _ _ Taut = true
+evaluate _ _ Top = true
 evaluate _ _ Bottom = false
 evaluate m w (Not x) = not $ evaluate m w x
 evaluate m w (And x1 x2) = evaluate m w x1 && evaluate m w x2
@@ -69,3 +68,15 @@ evaluate m w (Diamond x) = evaluate m w (Not (Box (Not x)))
 evaluate m@{ frame: { worlds, relation } } w (Box x) = and $ map (evaluate') accessible
   where evaluate' w' = evaluate m w' x
         accessible = filter (testK relation w) worlds
+
+evalK :: Evaluation (Array String) Expr
+evalK = Evaluation $ voidRight <$> evaluate <*> validateK
+
+evalT :: Evaluation (Array String) Expr
+evalT = Evaluation $ voidRight <$> evaluate <*> validateT
+
+evalS4 :: Evaluation (Array String) Expr
+evalS4 = Evaluation $ voidRight <$> evaluate <*> validateS4
+
+evalS5 :: Evaluation (Array String) Expr
+evalS5 = Evaluation $ voidRight <$> evaluate <*> validateS5
