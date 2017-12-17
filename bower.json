@@ -16,7 +16,8 @@
     "purescript-either": "^3.1.0",
     "purescript-foldable-traversable": "^3.6.1",
     "purescript-sparkle": "^4.1.1",
-    "purescript-parsing": "^4.3.1"
+    "purescript-parsing": "^4.3.1",
+    "purescript-glitter": "^0.1.0"
   },
   "devDependencies": {
     "purescript-psci-support": "^3.0.0"
