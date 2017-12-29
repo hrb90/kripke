@@ -2,6 +2,7 @@ module Data.Kripke.Validation
   ( Errors
   , Validation
   , toEither
+  , isTransitive
   , validateReflexive
   , validateTransitive
   , validateMonotonic
@@ -37,14 +38,16 @@ validateReflexive { worlds, relation } = vMap "The accessibility relation is not
   where reflexInRelation = \n -> testK relation n n
         isReflexive = and $ map reflexInRelation worlds
 
+isTransitive :: KripkeFrame -> Boolean
+isTransitive { worlds, relation } = and $ do
+        (Tuple u v) <- relation
+        w <- filter (testK relation v) worlds
+        pure $ testK relation u w
+
 -- Checks that a Kripke frame is transitive, i.e., if v is accessible from u, 
 -- and w is accessible from v, then w is accessible from u
 validateTransitive :: KripkeFrame -> Validation
-validateTransitive { worlds, relation } = vMap "The accessibility relation is not transitive" isTransitive
-  where isTransitive = and $ do
-          (Tuple u v) <- relation
-          w <- filter (testK relation v) worlds
-          pure $ testK relation u w
+validateTransitive = vMap "The accessibility relation is not transitive" <<< isTransitive
 
 -- Checks that a Kripke frame is Euclidean, i.e., if u and v are both accessible from w,
 -- then they are accessible from each other.
